@@ -21,6 +21,11 @@ class RX
     RX::Star.new(self)
   end
 
+  # A+ == A A*
+  def plus
+    self + RX::Star.new(self)
+  end
+
   def optional
     # a? is same as (|a)
     self | RX::Empty.new
