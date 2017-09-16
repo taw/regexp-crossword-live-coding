@@ -19,6 +19,11 @@ class RX
     def backref(name)
       RX::Backref.new(name)
     end
+
+    def space
+      # \s = [\t\n\v\f\r ]
+      cclass("\t\n\v\f\r ")
+    end
   end
 
   def |(other)
