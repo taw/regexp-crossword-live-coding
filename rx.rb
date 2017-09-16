@@ -21,6 +21,11 @@ class RX
     RX::Star.new(self)
   end
 
+  def optional
+    # a? is same as (|a)
+    self | RX::Empty.new
+  end
+
   def +(other)
     RX::Sequence.new(self, other)
   end
@@ -32,7 +37,8 @@ class RX::CharacterClass < RX
   end
 
   def match(str)
-    (str.size == 1) and Z3.Or( *@characters.map{|c| str[0] == c} )
+    return Z3.False unless str.size == 1
+    Z3.Or( *@characters.map{|c| str[0] == c} )
   end
 end
 
@@ -42,7 +48,8 @@ class RX::NegCharacterClass < RX
   end
 
   def match(str)
-    (str.size == 1) and !Z3.Or( *@characters.map{|c| str[0] == c} )
+    return Z3.False unless str.size == 1
+    !Z3.Or( *@characters.map{|c| str[0] == c} )
   end
 end
 
@@ -52,7 +59,8 @@ class RX::Character < RX
   end
 
   def match(str)
-    (str.size == 1) and (str[0] == @c)
+    return Z3.False unless str.size == 1
+    str[0] == @c
   end
 end
 
@@ -95,7 +103,7 @@ class RX::Star < RX
   end
 
   def match(str)
-    return true if str.size == 0
+    return Z3.Const(true) if str.size == 0
     # a* = empty | a a*
     Z3.Or(*
       (1..str.size).map{|i|
@@ -104,5 +112,11 @@ class RX::Star < RX
         @a.match(left) & self.match(right)
       }
     )
+  end
+end
+
+class RX::Empty < RX
+  def match(str)
+    Z3.Const(str.size == 0)
   end
 end

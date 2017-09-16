@@ -58,6 +58,7 @@ class RegexpCrosswordSolver
       puts @solver.assertions
       print_solution
     else
+      puts @solver.assertions
       puts "There is no solution"
     end
   end
