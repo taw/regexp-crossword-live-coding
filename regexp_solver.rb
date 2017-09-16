@@ -55,6 +55,7 @@ class RegexpCrosswordSolver
     setup
     add_constraints
     if @solver.satisfiable?
+      puts @solver.assertions
       print_solution
     else
       puts "There is no solution"

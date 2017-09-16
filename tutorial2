@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "z3"
+require_relative "rx"
+require_relative "regexp_solver"
+
+RegexpCrosswordSolver.new(
+  [
+    # Regexp::Alternative.new( Regexp::Character.new("A"), Regexp::Character.new("Z") )
+    RX.cclass("BDF")
+  ],
+  [
+    RX.cclass("ABC")
+  ]
+).solve
