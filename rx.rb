@@ -7,6 +7,10 @@ class RX
     def cclass(characters)
       RX::CharacterClass.new(characters)
     end
+
+    def nclass(characters)
+      RX::NegCharacterClass.new(characters)
+    end
   end
 
   def |(other)
@@ -21,6 +25,16 @@ class RX::CharacterClass < RX
 
   def match(str)
     (str.size == 1) and Z3.Or( *@characters.map{|c| str[0] == c} )
+  end
+end
+
+class RX::NegCharacterClass < RX
+  def initialize(characters)
+    @characters = characters.chars.map(&:ord)
+  end
+
+  def match(str)
+    (str.size == 1) and !Z3.Or( *@characters.map{|c| str[0] == c} )
   end
 end
 

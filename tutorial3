@@ -6,9 +6,9 @@ require_relative "regexp_solver"
 
 RegexpCrosswordSolver.new(
   [
-    RX.cclass("BDF")
+    RX.cclass("ABC")
   ],
   [
-    RX.cclass("ABC")
+    RX.nclass("AB")
   ]
 ).solve
