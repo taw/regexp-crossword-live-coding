@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "z3"
+require_relative "rx"
+require_relative "regexp_solver"
+
+RegexpCrosswordSolver.new(
+  [
+    RX.c("A").times(1),
+    RX.c("B") | RX.c("A"),
+  ],
+  [
+    RX.c("A").times_or_more(2)
+  ]
+).solve

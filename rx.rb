@@ -42,6 +42,22 @@ class RX
   def +(other)
     RX::Sequence.new(self, other)
   end
+
+  def times(n)
+    if n == 0
+      RX::Empty.new
+    else
+      self + self.times(n-1)
+    end
+  end
+
+  def times_or_more(n)
+    if n == 0
+      self.star
+    else
+      self + self.times_or_more(n-1)
+    end
+  end
 end
 
 class RX::CharacterClass < RX
