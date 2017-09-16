@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "z3"
+require_relative "rx"
+require_relative "regexp_solver"
+
+RegexpCrosswordSolver.new(
+  [
+    RX.c("A") | RX.c("B"),
+    RX.c("A") | RX.c("B"),
+  ],
+  [
+    RX.group(RX.c("A"), "col1-group1") + RX.backref("col1-group1"),
+  ]
+).solve

@@ -11,6 +11,14 @@ class RX
     def nclass(characters)
       RX::NegCharacterClass.new(characters)
     end
+
+    def group(a, name)
+      RX::Group.new(a, name)
+    end
+
+    def backref(name)
+      RX::Backref.new(name)
+    end
   end
 
   def |(other)
@@ -123,5 +131,30 @@ end
 class RX::Empty < RX
   def match(str)
     Z3.Const(str.size == 0)
+  end
+end
+
+class RX::Backref < RX
+  def initialize(name)
+    @name = name
+  end
+
+  def match(str)
+    (Z3.Int("#{@name}-size") == str.size) & (
+      (0...str.size).map{|i| str[i] == Z3.Int("#{@name}-char-#{i}")}
+    ).inject(Z3.True, :&)
+  end
+end
+
+class RX::Group < RX
+  def initialize(a, name)
+    @a = a
+    @name = name
+  end
+
+  def match(str)
+    @a.match(str) & (Z3.Int("#{@name}-size") == str.size) & (
+      (0...str.size).map{|i| str[i] == Z3.Int("#{@name}-char-#{i}")}
+    ).inject(Z3.True, :&)
   end
 end

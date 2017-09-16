@@ -54,11 +54,10 @@ class RegexpCrosswordSolver
     @solver = Z3::Solver.new
     setup
     add_constraints
+    puts @solver.assertions.map(&:simplify)
     if @solver.satisfiable?
-      puts @solver.assertions
       print_solution
     else
-      puts @solver.assertions
       puts "There is no solution"
     end
   end
