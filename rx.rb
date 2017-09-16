@@ -16,6 +16,14 @@ class RX
   def |(other)
     RX::Alternative.new(self, other)
   end
+
+  def star
+    RX::Star.new(self)
+  end
+
+  def +(other)
+    RX::Sequence.new(self, other)
+  end
 end
 
 class RX::CharacterClass < RX
@@ -56,5 +64,45 @@ class RX::Alternative < RX
 
   def match(str)
     @a.match(str) | @b.match(str)
+  end
+end
+
+class RX::Sequence < RX
+  def initialize(a,b)
+    @a = a
+    @b = b
+  end
+
+  def match(str)
+    # "ABC" ~ xy
+    # "" ~ x    "ABC" ~ y
+    # "A" ~ x    "BC" ~ y
+    # "AB" ~ x    "C" ~ y
+    # "ABC" ~ x    "" ~ y
+    Z3.Or(*
+      (0..str.size).map{|i|
+        left = str[0, i]
+        right = str[i..-1]
+        @a.match(left) & @b.match(right)
+      }
+    )
+  end
+end
+
+class RX::Star < RX
+  def initialize(a)
+    @a = a
+  end
+
+  def match(str)
+    return true if str.size == 0
+    # a* = empty | a a*
+    Z3.Or(*
+      (1..str.size).map{|i|
+        left = str[0, i]
+        right = str[i..-1]
+        @a.match(left) & self.match(right)
+      }
+    )
   end
 end
